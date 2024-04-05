@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "0xG9RBKRHBrP7yJAQL7qJX/tPSHnpGIsRlN/vh/+WX0=",
+  "Source": "InternShip_API",
+  "BasePath": "_content/InternShip_API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
