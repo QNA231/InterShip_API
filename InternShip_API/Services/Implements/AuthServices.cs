@@ -132,7 +132,7 @@ namespace InternShip_API.Services.Implements
             user.PhoneNumBer = request.PhoneNumBer;
             user.Name = request.Name;
             user.PassWord = BcryptNet.HashPassword(request.PassWord);
-            user.RoleId = 2;
+            user.RoleId = 3;
             user.UserStatusId = 1;
             user.IsActive = false;
             ConfirmEmail confirmEmail = new ConfirmEmail
