@@ -1,4 +1,5 @@
-﻿using InternShip_API.PayLoads.DataRequests.FoodRequests;
+﻿using InternShip_API.PayLoads.DataRequests.CinemaRequests;
+using InternShip_API.PayLoads.DataRequests.FoodRequests;
 using InternShip_API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +12,12 @@ namespace InternShip_API.Controllers
     public class AdminControllers : ControllerBase
     {
         private readonly IFoodServices foodServices;
+        private readonly ICinemaServices cinemaServices;
 
-        public AdminControllers(IFoodServices foodServices)
+        public AdminControllers(IFoodServices foodServices, ICinemaServices cinemaServices)
         {
             this.foodServices = foodServices;
+            this.cinemaServices = cinemaServices;
         }
         #region FoodServices
         [HttpPost("CreateFood")]
@@ -33,18 +36,36 @@ namespace InternShip_API.Controllers
 
         [HttpDelete("DeleteFood")]
         [Authorize(Roles = "Admin, Manager")]
-        public async Task<IActionResult> DeleteFood()
+        public async Task<IActionResult> DeleteFood(int foodId)
         {
-            int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
-            return Ok(foodServices.DeleteFood(id));
+            return Ok(foodServices.DeleteFood(foodId));
         }
         #endregion
 
-        #region
+        #region CinemaServices
+        [HttpPost("CreateCinema")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> CreateCinema(Request_CreateCinema request)
+        {
+            return Ok(await cinemaServices.CreateCinema(request));
+        }
 
+        [HttpPut("UpdateCinema")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> UpdateCinema(Request_UpdateCinema request)
+        {
+            return Ok(await cinemaServices.UpdateCinema(request));
+        }
+
+        [HttpDelete("DeleteCinema")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<IActionResult> DeleteCinema(Request_UpdateCinema request)
+        {
+            return Ok(await cinemaServices.DeleteCinema(request));
+        }
         #endregion
 
-        #region
+        #region RoomServices
 
         #endregion
 
