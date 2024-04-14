@@ -13,5 +13,6 @@ namespace InternShip_API.Services.Interfaces
         DataResponse_Token GenerateAccessToken(User user);
         DataResponse_Token RenewAccessToken(Request_RenewAccessToken request);
         ResponseObject<DataResponse_User> ChangePassWord(Request_ChangePassWord request, int userId);
+        Task<ResponseObject<DataResponse_User>> ConfirmCreateNewAccount(Request_CreateNewAccount request);
     }
 }

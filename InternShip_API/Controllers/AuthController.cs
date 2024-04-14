@@ -27,6 +27,11 @@ namespace InternShip_API.Controllers
         {
             return Ok(authServices.Login(request));
         }
+        [HttpPost("ConfrimCreateNewAccount")]
+        public IActionResult ConfirmCreateNewAccount([FromBody] Request_CreateNewAccount request)
+        {
+            return Ok(authServices.ConfirmCreateNewAccount(request));
+        }
         
     }
 }

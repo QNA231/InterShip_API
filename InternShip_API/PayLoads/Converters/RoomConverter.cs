@@ -24,8 +24,8 @@ namespace InternShip_API.PayLoads.Converters
                 Type = room.Type,
                 Description = room.Description,
                 Name = room.Name,
-                dataResponse_Schedules = dbContext.Schedules.Where(x => x.RoomId == room.Id).Select(scheduleConverter.EntityToDTO(x)),
-                dataResponse_Seats = dbContext.Seats.Where(x => x.RoomId == room.Id).Select(scheduleConverter.EntityToDTO(x)),
+                dataResponse_Schedules = dbContext.Schedules.Where(x => x.RoomId == room.Id).Select(x => scheduleConverter.EntityToDTO(x)),
+                dataResponse_Seats = dbContext.Seats.Where(x => x.RoomId == room.Id).Select(x => seatConverter.EntityToDTO(x)),
             };
         }
     }

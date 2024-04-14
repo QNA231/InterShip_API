@@ -81,7 +81,7 @@ namespace InternShip_API.Services.Implements
                 await dbContext.SaveChangesAsync();
                 if(request.request_UpdateRooms != null)
                 {
-                    var room = await roomServices.CreateListRoom(cinema.Id, request.request_UpdateRooms);
+                    var room = await roomServices.UpdateListRoom(cinema.Id, request.request_UpdateRooms);
                     cinema.Rooms = room;
                 }
                 else

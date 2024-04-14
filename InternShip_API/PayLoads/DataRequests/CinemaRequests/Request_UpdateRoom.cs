@@ -12,8 +12,6 @@ namespace InternShip_API.PayLoads.DataRequests.CinemaRequests
         public int CinemaId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public bool IsActive { get; set; }
-        public Cinema Cinema { get; set; }
-        public List<Request_UpdateSeat>? request_CreateSeats { get; set; }
+        public List<Request_CreateSeat>? request_CreateSeats { get; set; }
     }
 }

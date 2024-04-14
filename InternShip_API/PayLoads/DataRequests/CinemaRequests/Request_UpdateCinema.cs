@@ -9,6 +9,6 @@ namespace InternShip_API.PayLoads.DataRequests.CinemaRequests
         public string Description { get; set; }
         public string Code { get; set; }
         public string NameOfCinema { get; set; }
-        public List<Request_CreateRoom>? request_UpdateRooms { get; set; }
+        public List<Request_UpdateRoom>? request_UpdateRooms { get; set; }
     }
 }

@@ -7,7 +7,9 @@ namespace InternShip_API.Services.Interfaces
 {
     public interface IRoomServices
     {
-        ResponseObject<DataResponse_Room> CreateRoom(Request_CreateRoom request);
+        Task<ResponseObject<DataResponse_Room>> CreateRoom(Request_CreateRoom request);
         Task<List<Room>> CreateListRoom(int cinemaId, List<Request_CreateRoom> request);
+        Task<ResponseObject<DataResponse_Room>> UpdateRoom(Request_UpdateRoom request);
+        Task<ResponseObject<DataResponse_Room>> DeleteRoom(Request_UpdateRoom request);
     }
 }
