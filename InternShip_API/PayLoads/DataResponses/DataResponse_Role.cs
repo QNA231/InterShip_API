@@ -4,6 +4,6 @@
     {
         public string Code { get; set; }
         public string RoleName { get; set; }
-        public IQueryable<DataResponse_User> DataResponseUsers { get; set; }
+        public IQueryable<DataResponse_User>? DataResponseUsers { get; set; }
     }
 }

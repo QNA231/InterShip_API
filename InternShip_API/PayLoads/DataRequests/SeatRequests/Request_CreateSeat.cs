@@ -9,6 +9,5 @@ namespace InternShip_API.PayLoads.DataRequests.SeatRequests
         public string Line { get; set; }
         public int RoomId { get; set; }
         public int SeatTypeId { get; set; }
-        //public IEnumerable<Ticket>? Tickets { get; set; }
     }
 }

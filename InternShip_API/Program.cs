@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using InternShip_API.Handels.HandleEmail;
+using InternShip_API.PayLoads.Converters;
+using InternShip_API.PayLoads.DataResponses;
+using InternShip_API.PayLoads.Responses;
+using InternShip_API.Services.Implements;
+using InternShip_API.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +15,17 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IAuthServices, AuthServices>();
+builder.Services.AddSingleton<UserConverter>();
+builder.Services.AddSingleton<ResponseObject<DataResponse_User>>();
+
+builder.Services.AddSingleton<ResponseObject<DataResponse_Token>>();
+
+builder.Services.AddScoped<IEmailServices, EmailServices>();
+
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddSwaggerGen(x =>
 {
@@ -31,16 +48,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuer = false,
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:SecretKey").Value)),
     };
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
 });
 
 var app = builder.Build();

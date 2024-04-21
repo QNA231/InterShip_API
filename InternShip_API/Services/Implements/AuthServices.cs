@@ -25,14 +25,16 @@ namespace InternShip_API.Services.Implements
         private readonly IConfiguration configuration;
         private readonly UserConverter converter;
         private readonly ResponseObject<DataResponse_Token> responseTokenObject;
+        private readonly IEmailServices emailServices;
 
-        public AuthServices(ResponseObject<DataResponse_User> responseObject, IConfiguration configuration, UserConverter converter, ResponseObject<DataResponse_Token> responseTokenObject)
+        public AuthServices(ResponseObject<DataResponse_User> responseObject, IConfiguration configuration, UserConverter converter, ResponseObject<DataResponse_Token> responseTokenObject, IEmailServices emailServices)
         {
             dbContext = new AppDbContext();
             this.responseObject = responseObject;
             this.configuration = configuration;
             this.converter = converter;
             this.responseTokenObject = responseTokenObject;
+            this.emailServices = emailServices;
         }
 
         private string GenerateRefreshToken()
@@ -133,7 +135,7 @@ namespace InternShip_API.Services.Implements
             user.PhoneNumBer = request.PhoneNumBer;
             user.Name = request.Name;
             user.PassWord = BcryptNet.HashPassword(request.PassWord);
-            user.RoleId = 1;
+            user.RoleId = 3;
             user.UserStatusId = 1;
             user.IsActive = false;
             dbContext.Add(user);
@@ -147,48 +149,15 @@ namespace InternShip_API.Services.Implements
             };
             dbContext.Add(confirmEmail);
             dbContext.SaveChanges();
-            string mess = SendEmail(new EmailTo
-            {
-                Mail = request.Email,
-                Subject = "Nhận mã xác thực để xác thực tài khoản mới",
-                Content = $"Mã xác thực của bạn là: {confirmEmail.ConfirmCode}, mã này có hiệu lực trong 2 tiếng", 
-            });
-
-            return responseObject.ResponseSuccess("Đăng ký tài khoản thành công. Mã xác thực sẽ được gửi về email", converter.EntityToDTO(user));
+            var mess = new EmailMessage(new string[] { request.Email, }, "Nhận mã xác nhận tại đây: ", $"Mã xác nhận: {confirmEmail.ConfirmCode}");
+            var responseMessage = emailServices.SendEmail(mess);
+            return responseObject.ResponseSuccess("Bạn đã gửi yêu cầu đăng ký. Mã xác thực sẽ được gửi về email", converter.EntityToDTO(user));
         }
 
         private int GeneraterCodeActive()
         {
             Random rand = new Random();
             return rand.Next(100000, 999999);
-        }
-
-        private string SendEmail(EmailTo emailTo)
-        {
-            if (!IsValid.IsValidEmail(emailTo.Mail))
-            {
-                return "Định dạng mail không hợp lệ";
-            }
-            var smtpClient = new SmtpClient("smtp@gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("anhquan23122003@gmail.com", "qwertyuiop"),
-                EnableSsl = true,
-            };
-            try
-            {
-                var mess = new MailMessage();
-                mess.From = new MailAddress("anhqian23122003@gmail.com");
-                mess.To.Add(emailTo.Mail);
-                mess.Subject = emailTo.Subject;
-                mess.Body = emailTo.Content;
-                mess.IsBodyHtml = true;
-                return "Đã gửi Email thành công. Lấy mã xác thực";
-            }
-            catch(Exception ex)
-            {
-                return "Lỗi khi gửi Email" + ex.Message;
-            }
         }
 
         private void UpdatePassInDb(int userId, string hashedNewPass)
@@ -244,23 +213,26 @@ namespace InternShip_API.Services.Implements
             }
         }
 
-        public async Task<ResponseObject<DataResponse_User>> ConfirmCreateNewAccount(Request_CreateNewAccount request)
+        public async Task<string> ConfirmCreateNewAccount(string code)
         {
-            ConfirmEmail confirmEmail = dbContext.ConfirmEmails.Where(x => x.ConfirmCode.Equals(request.ConfirmCode)).SingleOrDefault();
+            ConfirmEmail confirmEmail = dbContext.ConfirmEmails.Where(x => x.ConfirmCode.Equals(code)).SingleOrDefault();
             if(confirmEmail == null)
             {
-                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Xác nhận đăng kí tài khoản thất bại", null);
+                return "Xác nhận đăng kí tài khoản thất bại";
             }
             if(confirmEmail.ExpiredTime < DateTime.Now)
             {
-                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Mã xác nhận đã hết hạn", null);
+                return "Mã xác nhận đã hết hạn";
             }
             User user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == confirmEmail.UserId);
-            user.UserStatusId = 2;
+            confirmEmail.IsConfirm = true;
+            dbContext.ConfirmEmails.Update(confirmEmail);
+            await dbContext.SaveChangesAsync();
+            user.UserStatusId = 1;
             user.IsActive = true;
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
-            return responseObject.ResponseSuccess("Xác nhận đăng kí tài khoản thành công", converter.EntityToDTO(user));
+            return "Xác nhận đăng kí tài khoản thành công";
         }
     }
 }

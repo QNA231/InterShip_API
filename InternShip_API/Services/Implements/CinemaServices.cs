@@ -66,22 +66,22 @@ namespace InternShip_API.Services.Implements
 
         public async Task<ResponseObject<DataResponse_Cinema>> UpdateCinema(Request_UpdateCinema request)
         {
-            if(dbContext.Cinemas.Any(x => x.Id == request.Id))
+            if (dbContext.Cinemas.Any(x => x.Id == request.Id))
             {
                 var cinema = dbContext.Cinemas.Find(request.Id);
                 cinema.Address = request.Address;
                 cinema.Description = request.Description;
                 cinema.Code = request.Code;
                 cinema.NameOfCinema = request.NameOfCinema;
-                if(cinema.Rooms != null)
+                if (cinema.Rooms != null)
                 {
                     dbContext.Rooms.RemoveRange(cinema.Rooms);
                 }
                 dbContext.Cinemas.Update(cinema);
                 await dbContext.SaveChangesAsync();
-                if(request.request_UpdateRooms != null)
+                if (request.request_UpdateRooms != null)
                 {
-                    var room = await roomServices.UpdateListRoom(cinema.Id, request.request_UpdateRooms);
+                    var room = await roomServices.CreateListRoom(cinema.Id, request.request_UpdateRooms);
                     cinema.Rooms = room;
                 }
                 else

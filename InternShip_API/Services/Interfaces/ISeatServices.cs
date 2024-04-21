@@ -7,8 +7,8 @@ namespace InternShip_API.Services.Interfaces
 {
     public interface ISeatServices
     {
-        ResponseObject<DataResponse_Seat> CreateSeat(Request_CreateSeat request);
+        Task<ResponseObject<DataResponse_Seat>> CreateSeat(Request_CreateSeat request);
         List<Seat> CreateListSeat(int roomId, List<Request_CreateSeat> request);
-        ResponseObject<DataResponse_Seat> UpdateSeat(Request_UpdateSeat request);
+        Task<ResponseObject<DataResponse_Seat>> UpdateSeat(Request_UpdateSeat request);
     }
 }
