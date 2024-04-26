@@ -24,6 +24,8 @@ builder.Services.AddSingleton<ResponseObject<DataResponse_Token>>();
 
 builder.Services.AddScoped<IEmailServices, EmailServices>();
 
+builder.Services.AddSingleton<IVnPayServices, VnPayServices>();
+
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 builder.Services.AddSingleton(emailConfig);
 

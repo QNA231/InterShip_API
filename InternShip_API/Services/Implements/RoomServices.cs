@@ -76,7 +76,6 @@ namespace InternShip_API.Services.Implements
             return roomResponseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy phòng", null);
         }
 
-
         public async Task<ResponseObject<DataResponse_Room>> UpdateRoom(Request_UpdateRoom request)
         {
             var cinema = dbContext.Cinemas.SingleOrDefault(x => x.Id == request.CinemaId);

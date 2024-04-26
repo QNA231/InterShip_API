@@ -228,7 +228,7 @@ namespace InternShip_API.Services.Implements
             confirmEmail.IsConfirm = true;
             dbContext.ConfirmEmails.Update(confirmEmail);
             await dbContext.SaveChangesAsync();
-            user.UserStatusId = 1;
+            user.UserStatusId = 2;
             user.IsActive = true;
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();

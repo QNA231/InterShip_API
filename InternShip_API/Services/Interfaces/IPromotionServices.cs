@@ -8,5 +8,6 @@ namespace InternShip_API.Services.Interfaces
     {
         Task<ResponseObject<DataResponse_Promotion>> CreatePromotion(Request_CreatePromotion request);
         Task<ResponseObject<DataResponse_Promotion>> UpdatePromotion(Request_UpdatePromotion request);
+        Task<ResponseObject<DataResponse_Promotion>> DeletePromotion(Request_UpdatePromotion request);
     }
 }

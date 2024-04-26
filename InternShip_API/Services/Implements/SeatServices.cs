@@ -12,15 +12,21 @@ namespace InternShip_API.Services.Implements
     {
         private readonly AppDbContext dbContext;
         private readonly ResponseObject<DataResponse_Seat> seatResponseObject;
+        private readonly ResponseObject<DataResponse_SeatType> seatTypeResponseObject;
+        private readonly ResponseObject<DataResponse_SeatStatus> seatStatusResponseObject;
         private readonly SeatConverter seatConverter;
-        private readonly ITicketServices ticketServices;
+        private readonly SeatTypeConverter typeConverter;
+        private readonly SeatStatusConverter statusConverter;
 
-        public SeatServices(ResponseObject<DataResponse_Seat> seatResponseObject, SeatConverter seatConverter, ITicketServices ticketServices)
+        public SeatServices(ResponseObject<DataResponse_Seat> seatResponseObject, ResponseObject<DataResponse_SeatType> seatTypeResponseObject, ResponseObject<DataResponse_SeatStatus> seatStatusResponseObject, SeatConverter seatConverter, SeatStatusConverter statusConverter, SeatTypeConverter typeConverter)
         {
             dbContext = new AppDbContext();
             this.seatResponseObject = seatResponseObject;
+            this.seatTypeResponseObject = seatTypeResponseObject;
+            this.seatStatusResponseObject = seatStatusResponseObject;
             this.seatConverter = seatConverter;
-            this.ticketServices = ticketServices;
+            this.statusConverter = statusConverter;
+            this.typeConverter = typeConverter;
         }
 
 
@@ -86,6 +92,79 @@ namespace InternShip_API.Services.Implements
             dbContext.Seats.AddRange(seats);
             dbContext.SaveChanges();
             return seats;
+        }
+
+
+        public async Task<ResponseObject<DataResponse_SeatType>> CreateSeatType(Request_SeatType request)
+        {
+            SeatType seatType = new SeatType
+            {
+                NameType = request.NameType
+            };
+            await dbContext.SeatTypes.AddAsync(seatType);
+            await dbContext.SaveChangesAsync();
+            return seatTypeResponseObject.ResponseSuccess("Thêm loại ghế thành công", typeConverter.EntityToDTO(seatType));
+        }
+
+        public async Task<ResponseObject<DataResponse_SeatType>> UpdateSeatType(Request_SeatType request)
+        {
+            var seat = dbContext.SeatTypes.SingleOrDefault(x => x.Id == request.Id);
+            if(seat == null)
+            {
+                return seatTypeResponseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy loại ghế", null);
+            }
+            seat.NameType = request.NameType;
+            dbContext.SeatTypes.Update(seat);
+            await dbContext.SaveChangesAsync();
+            return seatTypeResponseObject.ResponseSuccess("Cập nhật loại ghế thành công", typeConverter.EntityToDTO(seat));
+        }
+
+        public async Task<ResponseObject<DataResponse_SeatType>> DeleteSeatType(Request_SeatType request)
+        {
+            var seat = dbContext.SeatTypes.SingleOrDefault(x => x.Id == request.Id);
+            if (seat == null)
+            {
+                return seatTypeResponseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy loại ghế", null);
+            }
+            dbContext.SeatTypes.Remove(seat);
+            await dbContext.SaveChangesAsync();
+            return seatTypeResponseObject.ResponseSuccess("Xóa loại ghế thành công", typeConverter.EntityToDTO(seat));
+        }
+
+
+        public async Task<ResponseObject<DataResponse_SeatStatus>> CreateSeatStatus(Request_SeatStatus request)
+        {
+            SeatStatus seat = new SeatStatus();
+            seat.NameStatus = request.NameStatus;
+            seat.Code = request.Code;
+            await dbContext.AddAsync(seat);
+            await dbContext.SaveChangesAsync();
+            return seatStatusResponseObject.ResponseSuccess("Thêm tình trạng cho ghế thành công", statusConverter.EntityToDTO(seat));
+        }
+
+        public async Task<ResponseObject<DataResponse_SeatStatus>> UpdateSeatStatus(Request_SeatStatus request)
+        {
+            var seat = dbContext.SeatStatuses.SingleOrDefault(x => x.Id == request.Id);
+            if (seat == null)
+            {
+                return seatStatusResponseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy tình trạng ghế", null);
+            }
+            seat.NameStatus = request.NameStatus;
+            dbContext.SeatStatuses.Update(seat);
+            await dbContext.SaveChangesAsync();
+            return seatStatusResponseObject.ResponseSuccess("Cập nhật tình trạng ghế thành công", statusConverter.EntityToDTO(seat));
+        }
+
+        public async Task<ResponseObject<DataResponse_SeatStatus>> DeleteSeatStatus(Request_SeatStatus request)
+        {
+            var seat = dbContext.SeatStatuses.SingleOrDefault(x => x.Id == request.Id);
+            if (seat == null)
+            {
+                return seatStatusResponseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy tình trạng ghế", null);
+            }
+            dbContext.SeatStatuses.Remove(seat);
+            await dbContext.SaveChangesAsync();
+            return seatStatusResponseObject.ResponseSuccess("Xóa tình trạng ghế thành công", statusConverter.EntityToDTO(seat));
         }
     }
 }

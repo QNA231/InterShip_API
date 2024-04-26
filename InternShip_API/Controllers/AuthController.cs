@@ -28,9 +28,9 @@ namespace InternShip_API.Controllers
             return Ok(authServices.Login(request));
         }
         [HttpPost("ConfrimCreateNewAccount")]
-        public IActionResult ConfirmCreateNewAccount(string code)
+        public async Task<IActionResult> ConfirmCreateNewAccount(string code)
         {
-            return Ok(authServices.ConfirmCreateNewAccount(code));
+            return Ok(await authServices.ConfirmCreateNewAccount(code));
         }
         
     }

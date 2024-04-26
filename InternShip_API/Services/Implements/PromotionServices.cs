@@ -30,16 +30,54 @@ namespace InternShip_API.Services.Implements
             }
             Promotion promotion = new Promotion
             {
-
+                Percent = request.Percent,
+                Quantity = request.Quantity,
+                Type = request.Type,
+                StartTime = request.StartTime,
+                EndTime = request.EndTime,
+                Description = request.Description,
+                Name = request.Name
             };
-            await dbContext.AddAsync(promotion);
+            await dbContext.Promotions.AddAsync(promotion);
             await dbContext.SaveChangesAsync();
             return responseObject.ResponseSuccess("Thêm khuyến mãi thành công", converter.EntityToDTO(promotion));
         }
 
-        public Task<ResponseObject<DataResponse_Promotion>> UpdatePromotion(Request_UpdatePromotion request)
+        public async Task<ResponseObject<DataResponse_Promotion>> DeletePromotion(Request_UpdatePromotion request)
         {
-            throw new NotImplementedException();
+            Promotion promotion = dbContext.Promotions.SingleOrDefault(x => x.Id == request.Id);
+            if (promotion != null)
+            {
+                dbContext.Promotions.Remove(promotion);
+                await dbContext.SaveChangesAsync();
+                return responseObject.ResponseSuccess("Xóa khuyến mãi thành công", converter.EntityToDTO(promotion));
+            }
+            else
+            {
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy khuyến mãi", null);
+            }
+        }
+
+        public async Task<ResponseObject<DataResponse_Promotion>> UpdatePromotion(Request_UpdatePromotion request)
+        {
+            Promotion promotion = dbContext.Promotions.SingleOrDefault(x => x.Id == request.Id);
+            if (promotion != null)
+            {
+                promotion.Percent = request.Percent;
+                promotion.Quantity = request.Quantity;
+                promotion.Type = request.Type;
+                promotion.StartTime = request.StartTime;
+                promotion.EndTime = request.EndTime;
+                promotion.Description = request.Description;
+                promotion.Name = request.Name;
+                dbContext.Promotions.Update(promotion);
+                await dbContext.SaveChangesAsync();
+                return responseObject.ResponseSuccess("Cập nhật thông tin khuyến mãi thành công", converter.EntityToDTO(promotion));
+            }
+            else
+            {
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy khuyến mãi", null);
+            }
         }
     }
 }

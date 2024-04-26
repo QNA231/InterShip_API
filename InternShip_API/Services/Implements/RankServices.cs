@@ -32,6 +32,21 @@ namespace InternShip_API.Services.Implements
             return responseObject.ResponseSuccess("Thêm hạng thành công", converter.EntityToDTO(rankCustomer));
         }
 
+        public async Task<ResponseObject<DataResponse_RankCustomer>> DeleteRank(Request_UpdateRankCustomer request)
+        {
+            var rank = dbContext.RankCustomers.SingleOrDefault(x => x.Id == request.Id);
+            if (rank != null)
+            {
+                dbContext.RankCustomers.Remove(rank);
+                await dbContext.SaveChangesAsync();
+                return responseObject.ResponseSuccess("Xóa rank thành công", null);
+            }
+            else
+            {
+                return responseObject.ResponseError(StatusCodes.Status400BadRequest, "Không tìm thấy rank phù hợp", null);
+            }
+        }
+
         public async Task<ResponseObject<DataResponse_RankCustomer>> UpdateRank(Request_UpdateRankCustomer request)
         {
             var rankCustomer = dbContext.RankCustomers.SingleOrDefault(x => x.Id == request.Id);
