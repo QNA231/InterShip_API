@@ -4,4 +4,3 @@ Các chức năng có trong chương trình:
 - Xác thực tài khoản bằng email
 - CRUD của các bảng
 - Thanh toán bằng Vnpay còn lỗi
-- 
